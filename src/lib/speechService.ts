@@ -1,5 +1,6 @@
 
 import { Voice } from '../types';
+import { convertTextToSpeechAPI } from './apiService';
 
 export const availableVoices: Voice[] = [
   { id: 'en-US-GuyNeural', name: 'Guy', accent: 'US', gender: 'male' },
@@ -8,7 +9,18 @@ export const availableVoices: Voice[] = [
   { id: 'en-IN-NeerjaNeural', name: 'Neerja', accent: 'IN', gender: 'female' },
 ];
 
+// Primary method - using backend API
 export const convertTextToSpeech = async (text: string, voiceId: string): Promise<Blob> => {
+  try {
+    return await convertTextToSpeechAPI(text, voiceId);
+  } catch (error) {
+    console.error("Backend TTS service failed, falling back to browser TTS:", error);
+    throw error; // Let the caller handle the fallback
+  }
+};
+
+// Fallback method - using browser's Web Speech API
+export const fallbackConvertTextToSpeech = async (text: string, voiceId: string): Promise<Blob> => {
   return new Promise((resolve, reject) => {
     // Check if browser supports speech synthesis
     if (!('speechSynthesis' in window)) {
@@ -113,26 +125,3 @@ function createMediaStreamFromSpeechSynthesis(): MediaStream {
   
   return destination.stream;
 }
-
-// Note: Due to browser limitations in capturing SpeechSynthesis output,
-// we'll actually create a fallback that uses a demo audio URL
-export const fallbackConvertTextToSpeech = async (text: string, voiceId: string): Promise<Blob> => {
-  try {
-    // Try to use the browser's SpeechSynthesis API directly (without recording)
-    const utterance = new SpeechSynthesisUtterance(text);
-    utterance.voice = window.speechSynthesis.getVoices().find(v => 
-      v.name.includes(voiceId.split('-')[1]) || v.lang === voiceId.split('-')[0] + '-' + voiceId.split('-')[1]
-    ) || null;
-    
-    window.speechSynthesis.speak(utterance);
-    
-    // Create a fake audio blob
-    const response = await fetch('https://audio-samples.github.io/samples/mp3/blizzard_biased/sample-2.mp3');
-    return await response.blob();
-  } catch (error) {
-    console.error('Error with speech synthesis:', error);
-    // Fallback to our demo audio
-    const response = await fetch('https://audio-samples.github.io/samples/mp3/blizzard_biased/sample-2.mp3');
-    return await response.blob();
-  }
-};

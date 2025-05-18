@@ -1,73 +1,59 @@
-# Welcome to your Lovable project
 
-## Project info
+# VoiceFlow - Text-to-Speech Application
 
-**URL**: https://lovable.dev/projects/07655e6e-ecb5-4087-81a0-93e02c2c6d3b
+A modern web application for converting text to speech with multiple voice options.
 
-## How can I edit this code?
+## Features
 
-There are several ways of editing your application.
+- Convert text to speech with multiple voice options
+- Simple, intuitive interface for text input
+- Audio playback controls with visualization
+- Responsive design that works across all devices
 
-**Use Lovable**
+## Frontend Setup
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/07655e6e-ecb5-4087-81a0-93e02c2c6d3b) and start prompting.
+1. Install dependencies:
+```
+npm install
+```
 
-Changes made via Lovable will be committed automatically to this repo.
-
-**Use your preferred IDE**
-
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
-
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-
-Follow these steps:
-
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
+2. Run the development server:
+```
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+## Backend Setup
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+1. Navigate to the server directory:
+```
+cd server
+```
 
-**Use GitHub Codespaces**
+2. Install server dependencies:
+```
+npm install
+```
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+3. Start the server:
+```
+npm start
+```
 
-## What technologies are used for this project?
+## Development
 
-This project is built with:
+- Frontend is built with React, TypeScript, and Tailwind CSS
+- Backend uses Express.js and Playwright to generate speech audio
+- The application requires both frontend and backend to be running for full functionality
 
-- Vite
-- TypeScript
+## Technology Stack
+
 - React
-- shadcn-ui
+- TypeScript
 - Tailwind CSS
+- Express.js
+- Playwright
 
-## How can I deploy this project?
+## Notes
 
-Simply open [Lovable](https://lovable.dev/projects/07655e6e-ecb5-4087-81a0-93e02c2c6d3b) and click on Share -> Publish.
+This application demonstrates a text-to-speech service using Speechma.com as the underlying engine. The backend utilizes Playwright to interact with the Speechma website and retrieve generated audio.
 
-## Can I connect a custom domain to my Lovable project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
