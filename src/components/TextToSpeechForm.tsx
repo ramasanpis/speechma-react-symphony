@@ -6,7 +6,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { AudioState, Voice } from '../types';
 import VoiceSelector from './VoiceSelector';
 import AudioPlayer from './AudioPlayer';
-import { convertTextToSpeech, fallbackConvertTextToSpeech } from '../lib/speechService';
+import { convertTextToSpeech } from '../lib/speechService';
 import { toast } from '@/components/ui/sonner';
 import { Loader2 } from 'lucide-react';
 
@@ -48,16 +48,8 @@ const TextToSpeechForm: React.FC<TextToSpeechFormProps> = ({ voices }) => {
     setAudioState(prev => ({ ...prev, isLoading: true, error: null }));
     
     try {
-      // First try with our main conversion method
-      let audioBlob;
-      try {
-        audioBlob = await convertTextToSpeech(text, selectedVoice);
-      } catch (error) {
-        console.log("Primary text-to-speech method failed, trying fallback");
-        // If that fails, use our fallback method
-        audioBlob = await fallbackConvertTextToSpeech(text, selectedVoice);
-      }
-      
+      // Use only the backend conversion method
+      const audioBlob = await convertTextToSpeech(text, selectedVoice);
       const audioUrl = URL.createObjectURL(audioBlob);
       
       setAudioState({
