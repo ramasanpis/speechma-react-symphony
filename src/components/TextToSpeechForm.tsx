@@ -6,7 +6,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { AudioState, Voice } from '../types';
 import VoiceSelector from './VoiceSelector';
 import AudioPlayer from './AudioPlayer';
-import { convertTextToSpeech } from '../lib/speechService';
+import { convertTextToSpeech, fallbackConvertTextToSpeech } from '../lib/speechService';
 import { toast } from '@/components/ui/sonner';
 import { Loader2 } from 'lucide-react';
 
@@ -48,7 +48,16 @@ const TextToSpeechForm: React.FC<TextToSpeechFormProps> = ({ voices }) => {
     setAudioState(prev => ({ ...prev, isLoading: true, error: null }));
     
     try {
-      const audioBlob = await convertTextToSpeech(text, selectedVoice);
+      // First try with our main conversion method
+      let audioBlob;
+      try {
+        audioBlob = await convertTextToSpeech(text, selectedVoice);
+      } catch (error) {
+        console.log("Primary text-to-speech method failed, trying fallback");
+        // If that fails, use our fallback method
+        audioBlob = await fallbackConvertTextToSpeech(text, selectedVoice);
+      }
+      
       const audioUrl = URL.createObjectURL(audioBlob);
       
       setAudioState({
@@ -62,30 +71,16 @@ const TextToSpeechForm: React.FC<TextToSpeechFormProps> = ({ voices }) => {
     } catch (error) {
       console.error('Error generating speech:', error);
       
-      if (error instanceof Error) {
-        toast.error('Backend service required for text-to-speech conversion', {
-          description: 'This demo requires a server implementation to connect to the TTS service.',
-          duration: 5000
-        });
-        
-        // For demo purposes, we'll create a mock success state
-        // In a real application, you would handle the error properly
-        setTimeout(() => {
-          setAudioState({
-            url: 'https://audio-samples.github.io/samples/mp3/blizzard_biased/sample-2.mp3',
-            isPlaying: false,
-            isLoading: false,
-            error: null
-          });
-          toast.success('Demo audio loaded');
-        }, 1000);
-      } else {
-        setAudioState(prev => ({ 
-          ...prev, 
-          isLoading: false, 
-          error: 'An unknown error occurred' 
-        }));
-      }
+      setAudioState(prev => ({ 
+        ...prev, 
+        isLoading: false, 
+        error: error instanceof Error ? error.message : 'An unknown error occurred' 
+      }));
+      
+      toast.error('Failed to generate speech', {
+        description: 'There was an error converting your text to speech.',
+        duration: 5000
+      });
     }
   };
   
